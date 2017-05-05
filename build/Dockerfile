@@ -1,4 +1,4 @@
-# Dockerfile to build a docker image from Openfire Master
+# Dockerfile to build a XSF website devenv
 #
 # Dave Cridland <dave.cridland@surevine.com>
 # Copyright 2017 Surevine Ltd
@@ -22,13 +22,7 @@ RUN apt-get update && apt-get dist-upgrade -y && apt-get autoremove -y && apt-ge
 # Install dependencies.
 RUN apt-get install -y python-pip git && pip install pelican==3.3 markdown ghp-import
 
-# Arguments::
-ARG XSF_GIT=https://github.com/xsf/xmpp.org
+VOLUME /var/tmp/output
+VOLUME /var/tmp/src/xmpp.org
 
-# Clone sources
-WORKDIR /var/tmp/src
-RUN git clone ${XSF_GIT} && cd xmpp.org && make publish
-
-EXPOSE 8000
-
-CMD cd /var/tmp/src/xmpp.org && make serve
+CMD cd /var/tmp/src/xmpp.org && git fetch && git checkout ${COMMIT_HASH} && make publish && make html && cp -prv output/* /var/tmp/output/

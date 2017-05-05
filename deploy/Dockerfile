@@ -20,15 +20,13 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get dist-upgrade -y && apt-get autoremove -y && apt-get clean
 
 # Install dependencies.
-RUN apt-get install -y python-pip git && pip install pelican==3.3 markdown ghp-import
+RUN apt-get install -y nginx
 
-# Arguments::
-ARG XSF_GIT=https://github.com/xsf/xmpp.org
+# Copy site
+WORKDIR /usr/share/nginx/www/
+COPY output/ /usr/share/nginx/www/
+#COPY nginx.conf /etc/nginx/nginx.conf
 
-# Clone sources
-WORKDIR /var/tmp/src
-RUN git clone ${XSF_GIT} && cd xmpp.org && make publish
+EXPOSE 80
 
-EXPOSE 8000
-
-CMD cd /var/tmp/src/xmpp.org && make serve
+CMD /usr/sbin/nginx -g 'daemon off;'

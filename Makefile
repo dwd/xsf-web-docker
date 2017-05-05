@@ -1,17 +1,23 @@
 #
 # Build a docker image to build the website,
 # then build a docker image to serve it.
-# If xmpp.org repo is checked out (in ./xmpp.org),
-# then build the website from the latest commit here.
-# (This commit must be pushed...)
 #
-
-COMMIT_HASH=$([-d xmpp.org] && cd xmpp.org && git rev-parse HEAD)
+# The website source must be checked out
+# locally as ./xmpp.org (which'll happen
+# automatically with git submodules).
+#
 
 all: deployer
 
-deployer: builder
+deployer: site
 	docker build -t xmpp-org/latest deploy
 
 builder:
-	docker build --build-arg COMMIT_HASH=${COMMIT_HASH} -t xmpp-org-build/latest build
+	docker build -t xmpp-org-build/latest build
+
+site: builder
+	docker run --env COMMIT_HASH=${COMMIT_HASH} --volume $(CURDIR)/xmpp.org:/var/tmp/src/xmpp.org --volume $(CURDIR)/deploy/output:/var/tmp/output -t -i xmpp-org-build/latest
+
+serve:
+	docker run -p 8080:80 -t -i xmpp-org/latest
+
