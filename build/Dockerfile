@@ -25,4 +25,4 @@ RUN apt-get install -y python-pip git && pip install pelican==3.3 markdown ghp-i
 VOLUME /var/tmp/output
 VOLUME /var/tmp/src/xmpp.org
 
-CMD cd /var/tmp/src/xmpp.org && git fetch && git checkout ${COMMIT_HASH} && make publish && make html && cp -prv output/* /var/tmp/output/
+CMD cd /var/tmp/src/xmpp.org && make publish && make html && cp -prv output/* /var/tmp/output/
