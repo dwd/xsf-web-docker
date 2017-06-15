@@ -25,7 +25,7 @@ RUN apt-get install -y nginx
 # Copy site
 WORKDIR /var/www/html/
 COPY output/ /var/www/html/
-#COPY nginx.conf /etc/nginx/nginx.conf
+COPY xsf.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
